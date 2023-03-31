@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import Axios from "axios";
 
@@ -20,9 +20,12 @@ function App() {
       name: name,
       phone: phone,
       email: email,
-    }).then(() => {
-      console.log("successful insert");
     });
+
+    setContactList([
+      ...contactList,
+      { contactName: name, contactPhone: phone, contactEmail: email },
+    ]);
   };
 
   return (

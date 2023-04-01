@@ -77,9 +77,9 @@ function App() {
                   <td>{val.contactPhone}</td>
                   <td>{val.contactEmail}</td>
                   <td>
-                    <a href="api/update">Edit</a>
+                    <button onClick={() => handleEdit(val.id)}>Edit</button>
                     &nbsp;&nbsp;&nbsp;
-                    <a href="api/delete">Delete</a>
+                    <button onClick={() => handleDelete(val.id)}>Delete</button>
                   </td>
                 </tr>
               );

@@ -27,6 +27,8 @@ function App() {
       { contactName: name, contactPhone: phone, contactEmail: email },
     ]);
   };
+  
+  handleDelete = (event) => {
 
   return (
     <div className="App">

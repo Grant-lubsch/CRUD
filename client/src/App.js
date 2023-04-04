@@ -7,6 +7,8 @@ function App() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [contactList, setContactList] = useState([]);
+  const [editing, setEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
 
   useEffect(() => {
     Axios.get("http://localhost:3001/api/get").then((response) => {
@@ -15,20 +17,81 @@ function App() {
   }, []);
 
   const submitInfo = () => {
+    Axios.post("http://localhost:3001/api/insert", {
+      name: name,
+      phone: phone,
+      email: email,
+    }).then(() => {
+      setContactList([
+        ...contactList,
+        { contactName: name, contactPhone: phone, contactEmail: email },
+      ]);
+      setName("");
+      setPhone("");
+      setEmail("");
+    });
+  };
+
+  /*  const submitInfo = () => {
     console.log("submitInfo() called");
     Axios.post("http://localhost:3001/api/insert", {
       name: name,
       phone: phone,
       email: email,
     });
+*/
 
-    setContactList([
-      ...contactList,
-      { contactName: name, contactPhone: phone, contactEmail: email },
-    ]);
+  const handleEdit = (id) => {
+    setEditing(true);
+    setEditId(id);
+    const contact = contactList.find((contact) => contact.id === id);
+    setName(contact.contactName);
+    setPhone(contact.contactPhone);
+    setEmail(contact.contactEmail);
   };
-  
-  handleDelete = (event) => {
+
+  const handleDelete = (id) => {
+    Axios.delete(`http://localhost:3001/api/delete/${id}`).then(() => {
+      setContactList(
+        contactList.filter((contact) => {
+          return contact.id !== id;
+        })
+      );
+    });
+  };
+
+  const handleUpdate = () => {
+    Axios.put(`http://localhost:3001/api/update/${editId}`, {
+      name: name,
+      phone: phone,
+      email: email,
+    }).then(() => {
+      setContactList(
+        contactList.map((contact) => {
+          if (contact.id === editId) {
+            return {
+              id: editId,
+              contactName: name,
+              contactPhone: phone,
+              contactEmail: email,
+            };
+          } else {
+            return contact;
+          }
+        })
+      );
+      setName("");
+      setPhone("");
+      setEmail("");
+      setEditId(null);
+      setEditing(false);
+    });
+  };
+
+  setContactList([
+    ...contactList,
+    { contactName: name, contactPhone: phone, contactEmail: email },
+  ]);
 
   return (
     <div className="App">

@@ -101,28 +101,28 @@ function App() {
           type="text"
           name="name"
           placeholder="Name:"
-          onChange={(e) => {
-            setName(e.target.value);
-          }}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
         <input
           type="text"
           name="phone"
           placeholder="Phone Number:"
-          onChange={(e) => {
-            setPhone(e.target.value);
-          }}
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
         />
         <input
           type="text"
           name="email"
           placeholder="E-Mail:"
-          onChange={(e) => {
-            setEmail(e.target.value);
-          }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
-        <button onClick={submitInfo}>Submit Contact</button>
-
+        {editing ? (
+          <button onclick={handleUpdate}>Update Contact</button>
+        ) : (
+          <button onClick={submitInfo}>Submit Contact</button>
+        )}
         <br></br>
 
         <table border="1">

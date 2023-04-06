@@ -88,7 +88,7 @@ function App() {
     });
   };
 
-//  setContactList([
+  setContactList([
     ...contactList,
     { contactName: name, contactPhone: phone, contactEmail: email },
   ]);

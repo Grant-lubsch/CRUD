@@ -15,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Get all contacts
 app.get("/api/get", (req, res) => {
   const sqlSelect = "SELECT * FROM contacts";
   db.query(sqlSelect, (err, result) => {
@@ -22,9 +23,8 @@ app.get("/api/get", (req, res) => {
   });
 });
 
+// Insert a new contact
 app.post("/api/insert", (req, res) => {
-  console.log("in api/insert");
-
   const name = req.body.name;
   const phone = req.body.phone;
   const email = req.body.email;
@@ -34,9 +34,32 @@ app.post("/api/insert", (req, res) => {
   db.query(sqlInsert, [name, phone, email], (err, result) => {
     console.log(result);
   });
-  console.log("done insert");
+});
+
+// Update a contact
+app.put("/api/update/:id", (req, res) => {
+  const id = req.params.id;
+  const name = req.body.name;
+  const phone = req.body.phone;
+  const email = req.body.email;
+
+  const sqlUpdate =
+    "UPDATE contacts SET contactName = ?, contactPhone = ?, contactEmail = ? WHERE id = ?";
+  db.query(sqlUpdate, [name, phone, email, id], (err, result) => {
+    if (err) console.log(err);
+  });
+});
+
+// Delete a contact
+app.delete("/api/delete/:id", (req, res) => {
+  const id = req.params.id;
+
+  const sqlDelete = "DELETE FROM contacts WHERE id = ?";
+  db.query(sqlDelete, id, (err, result) => {
+    if (err) console.log(err);
+  });
 });
 
 app.listen(3001, () => {
-  console.log("runnning on port 3001");
+  console.log("Server running on port 3001");
 });

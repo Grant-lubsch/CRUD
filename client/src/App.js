@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Axios from "axios";
 
@@ -21,42 +21,11 @@ function App() {
       name: name,
       phone: phone,
       email: email,
-    }).then(() => {
-      setContactList([
-        ...contactList,
-        { contactName: name, contactPhone: phone, contactEmail: email },
-      ]);
+    }).then((response) => {
+      setContactList([...contactList, response.data]);
       setName("");
       setPhone("");
       setEmail("");
-    });
-  };
-
-  /*  const submitInfo = () => {
-    console.log("submitInfo() called");
-    Axios.post("http://localhost:3001/api/insert", {
-      name: name,
-      phone: phone,
-      email: email,
-    });
-*/
-
-  const handleEdit = (id) => {
-    setEditing(true);
-    setEditId(id);
-    const contact = contactList.find((contact) => contact.id === id);
-    setName(contact.contactName);
-    setPhone(contact.contactPhone);
-    setEmail(contact.contactEmail);
-  };
-
-  const handleDelete = (id) => {
-    Axios.delete(`http://localhost:3001/api/delete/${id}`).then(() => {
-      setContactList(
-        contactList.filter((contact) => {
-          return contact.id !== id;
-        })
-      );
     });
   };
 
@@ -66,32 +35,24 @@ function App() {
       phone: phone,
       email: email,
     }).then(() => {
-      setContactList(
-        contactList.map((contact) => {
-          if (contact.id === editId) {
-            return {
-              id: editId,
-              contactName: name,
-              contactPhone: phone,
-              contactEmail: email,
-            };
-          } else {
-            return contact;
-          }
-        })
-      );
       setName("");
       setPhone("");
       setEmail("");
       setEditId(null);
       setEditing(false);
+      Axios.get("http://localhost:3001/api/get").then((response) => {
+        setContactList(response.data);
+      });
     });
   };
 
-  setContactList([
-    ...contactList,
-    { contactName: name, contactPhone: phone, contactEmail: email },
-  ]);
+  const handleDelete = (id) => {
+    Axios.delete(`http://localhost:3001/api/delete/${id}`).then(() => {
+      Axios.get("http://localhost:3001/api/get").then((response) => {
+        setContactList(response.data);
+      });
+    });
+  };
 
   return (
     <div className="App">
@@ -119,12 +80,11 @@ function App() {
           onChange={(e) => setEmail(e.target.value)}
         />
         {editing ? (
-          <button onclick={handleUpdate}>Update Contact</button>
+          <button onClick={handleUpdate}>Update Contact</button>
         ) : (
           <button onClick={submitInfo}>Submit Contact</button>
         )}
-        <br></br>
-
+        <br />
         <table border="1">
           <thead>
             <tr>
@@ -142,7 +102,7 @@ function App() {
                   <td>{val.contactPhone}</td>
                   <td>{val.contactEmail}</td>
                   <td>
-                    <button onClick={() => handleEdit(val.id)}>Edit</button>
+                    <button onClick={() => handleUpdate(val.id)}>Edit</button>
                     &nbsp;&nbsp;&nbsp;
                     <button onClick={() => handleDelete(val.id)}>Delete</button>
                   </td>

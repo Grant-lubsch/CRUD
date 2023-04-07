@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "./App.css";
 import Axios from "axios";
+import "./App.css";
 
 function App() {
   const [name, setName] = useState("");
@@ -21,15 +21,27 @@ function App() {
       name: name,
       phone: phone,
       email: email,
-    }).then((response) => {
-      setContactList([...contactList, response.data]);
+    }).then(() => {
+      setContactList([
+        ...contactList,
+        { contactName: name, contactPhone: phone, contactEmail: email },
+      ]);
       setName("");
       setPhone("");
       setEmail("");
     });
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = (id) => {
+    setEditing(true);
+    setEditId(id);
+    const contactToUpdate = contactList.find((val) => val.id === id);
+    setName(contactToUpdate.contactName);
+    setPhone(contactToUpdate.contactPhone);
+    setEmail(contactToUpdate.contactEmail);
+  };
+
+  const handleUpdateSubmit = () => {
     Axios.put(`http://localhost:3001/api/update/${editId}`, {
       name: name,
       phone: phone,
@@ -53,7 +65,6 @@ function App() {
       });
     });
   };
-
   return (
     <div className="App">
       <h1>Contact List Application</h1>
@@ -80,7 +91,7 @@ function App() {
           onChange={(e) => setEmail(e.target.value)}
         />
         {editing ? (
-          <button onClick={handleUpdate}>Update Contact</button>
+          <button onClick={handleUpdateSubmit}>Update Contact</button>
         ) : (
           <button onClick={submitInfo}>Submit Contact</button>
         )}

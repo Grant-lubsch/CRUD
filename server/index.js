@@ -33,10 +33,11 @@ app.post("/api/insert", (req, res) => {
     "INSERT INTO contacts (contactName, contactPhone, contactEmail) VALUES (?,?,?)";
   db.query(sqlInsert, [name, phone, email], (err, result) => {
     console.log(result);
+    res.send("Contact added successfully!");
   });
 });
 
-// Update a contact
+// Update an existing contact
 app.put("/api/update/:id", (req, res) => {
   const id = req.params.id;
   const name = req.body.name;
@@ -44,19 +45,20 @@ app.put("/api/update/:id", (req, res) => {
   const email = req.body.email;
 
   const sqlUpdate =
-    "UPDATE contacts SET contactName = ?, contactPhone = ?, contactEmail = ? WHERE id = ?";
+    "UPDATE contacts SET contactName=?, contactPhone=?, contactEmail=? WHERE id=?";
   db.query(sqlUpdate, [name, phone, email, id], (err, result) => {
-    if (err) console.log(err);
+    console.log(result);
+    res.send("Contact updated successfully!");
   });
 });
 
-// Delete a contact
+// Delete an existing contact
 app.delete("/api/delete/:id", (req, res) => {
   const id = req.params.id;
-
-  const sqlDelete = "DELETE FROM contacts WHERE id = ?";
+  const sqlDelete = "DELETE FROM contacts WHERE id=?";
   db.query(sqlDelete, id, (err, result) => {
-    if (err) console.log(err);
+    console.log(result);
+    res.send("Contact deleted successfully!");
   });
 });
 

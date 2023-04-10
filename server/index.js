@@ -23,7 +23,7 @@ app.get("/api/get", (req, res) => {
   });
 });
 
-// Insert a new contact
+// Insert new contact
 app.post("/api/insert", (req, res) => {
   const name = req.body.name;
   const phone = req.body.phone;

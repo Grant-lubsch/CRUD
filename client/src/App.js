@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "./App.css";
+import ReactPaginate from "react-paginate";
 
 function App() {
   const [name, setName] = useState("");
@@ -9,6 +10,8 @@ function App() {
   const [contactList, setContactList] = useState([]);
   const [editing, setEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [contactsPerPage, setContactsPerPage] = useState(5);
 
   useEffect(() => {
     Axios.get("http://localhost:3001/api/get").then((response) => {
@@ -22,13 +25,18 @@ function App() {
       phone: phone,
       email: email,
     }).then(() => {
-      setContactList([
-        ...contactList,
-        { contactName: name, contactPhone: phone, contactEmail: email },
-      ]);
       setName("");
       setPhone("");
       setEmail("");
+      Axios.get("http://localhost:3001/api/get").then((response) => {
+        setContactList(
+          response.data.slice(
+            0,
+            currentPage * contactsPerPage + contactsPerPage
+          )
+        );
+        setPageCount(Math.ceil(response.data.length / contactsPerPage));
+      });
     });
   };
 
@@ -65,6 +73,11 @@ function App() {
       });
     });
   };
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+
   return (
     <div className="App">
       <h1>Contact List Application</h1>

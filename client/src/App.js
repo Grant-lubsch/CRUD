@@ -74,10 +74,6 @@ function App() {
     });
   };
 
-  const handlePageClick = ({ selected }) => {
-    setCurrentPage(selected);
-  };
-
   return (
     <div className="App">
       <h1>Contact List Application</h1>

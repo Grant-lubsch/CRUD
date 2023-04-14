@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import "./App.css";
-import ReactPaginate from "react-paginate";
 
 function App() {
   const [name, setName] = useState("");
@@ -10,8 +9,8 @@ function App() {
   const [contactList, setContactList] = useState([]);
   const [editing, setEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [contactsPerPage, setContactsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     Axios.get("http://localhost:3001/api/get").then((response) => {
@@ -25,18 +24,13 @@ function App() {
       phone: phone,
       email: email,
     }).then(() => {
+      setContactList([
+        ...contactList,
+        { contactName: name, contactPhone: phone, contactEmail: email },
+      ]);
       setName("");
       setPhone("");
       setEmail("");
-      Axios.get("http://localhost:3001/api/get").then((response) => {
-        setContactList(
-          response.data.slice(
-            0,
-            currentPage * contactsPerPage + contactsPerPage
-          )
-        );
-        setPageCount(Math.ceil(response.data.length / contactsPerPage));
-      });
     });
   };
 
@@ -73,6 +67,20 @@ function App() {
       });
     });
   };
+
+  const handleClick = (event) => {
+    setCurrentPage(Number(event.target.id));
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = contactList.slice(indexOfFirstItem, indexOfLastItem);
+
+  const pageNumbers = [];
+
+  for (let i = 1; i <= Math.ceil(contactList.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <div className="App">
@@ -115,7 +123,7 @@ function App() {
             </tr>
           </thead>
           <tbody>
-            {contactList.map((val) => {
+            {currentItems.map((val) => {
               return (
                 <tr key={val.id}>
                   <td>{val.contactName}</td>
@@ -131,6 +139,20 @@ function App() {
             })}
           </tbody>
         </table>
+        <div className="pagination">
+          {pageNumbers.map((number) => {
+            return (
+              <button
+                key={number}
+                id={number}
+                onClick={handleClick}
+                className={currentPage === number ? "active" : null}
+              >
+                {number}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

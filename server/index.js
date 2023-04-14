@@ -1,30 +1,25 @@
 const express = require("express");
-const mysql = require("mysql");
+const bodyParser = require("body-parser");
 const cors = require("cors");
-
 const app = express();
+const mysql = require("mysql");
 
-app.use(cors());
-app.use(express.json());
-
-const db = mysql.createConnection({
-  user: "root",
+const db = mysql.createPool({
   host: "localhost",
+  user: "root",
   password: "AsDfGh12!",
   database: "ContactListDataBase",
 });
 
+app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // Get all contacts
 app.get("/api/get", (req, res) => {
-  const limit = req.query.limit || 5;
-  const offset = req.query.offset || 0;
-  const sqlSelect = "SELECT * FROM contacts LIMIT ? OFFSET ?";
-  db.query(sqlSelect, [limit, offset], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
+  const sqlSelect = "SELECT * FROM contacts";
+  db.query(sqlSelect, (err, result) => {
+    res.send(result);
   });
 });
 
@@ -35,17 +30,14 @@ app.post("/api/insert", (req, res) => {
   const email = req.body.email;
 
   const sqlInsert =
-    "INSERT INTO contacts (contactName, contactPhone, contactEmail) VALUES (?, ?, ?)";
+    "INSERT INTO contacts (contactName, contactPhone, contactEmail) VALUES (?,?,?)";
   db.query(sqlInsert, [name, phone, email], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send("Values inserted");
-    }
+    console.log(result);
+    res.send("Contact added successfully!");
   });
 });
 
-// Update a contact
+// Update an existing contact
 app.put("/api/update/:id", (req, res) => {
   const id = req.params.id;
   const name = req.body.name;
@@ -53,29 +45,23 @@ app.put("/api/update/:id", (req, res) => {
   const email = req.body.email;
 
   const sqlUpdate =
-    "UPDATE contacts SET contactName = ?, contactPhone = ?, contactEmail = ? WHERE id = ?";
+    "UPDATE contacts SET contactName=?, contactPhone=?, contactEmail=? WHERE id=?";
   db.query(sqlUpdate, [name, phone, email, id], (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send("Contact updated");
-    }
+    console.log(result);
+    res.send("Contact updated successfully!");
   });
 });
 
-// Delete a contact
+// Delete an existing contact
 app.delete("/api/delete/:id", (req, res) => {
   const id = req.params.id;
-  const sqlDelete = "DELETE FROM contacts WHERE id = ?";
+  const sqlDelete = "DELETE FROM contacts WHERE id=?";
   db.query(sqlDelete, id, (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send("Contact deleted");
-    }
+    console.log(result);
+    res.send("Contact deleted successfully!");
   });
 });
 
 app.listen(3001, () => {
-  console.log("running on port 3001");
+  console.log("Server running on port 3001");
 });

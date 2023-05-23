@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "react scripts build",
     "start": "npm run dev",
     "server": "npm run start --prefix ./server",
     "client": "npm start --prefix ./client",

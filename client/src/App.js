@@ -13,13 +13,13 @@ function App() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    Axios.get("http://localhost:3001/api/get").then((response) => {
+    Axios.get("/api/get").then((response) => {
       setContactList(response.data);
     });
   }, []);
 
   const submitInfo = () => {
-    Axios.post("http://localhost:3001/api/insert", {
+    Axios.post("/api/insert", {
       name: name,
       phone: phone,
       email: email,
@@ -44,7 +44,7 @@ function App() {
   };
 
   const handleUpdateSubmit = () => {
-    Axios.put(`http://localhost:3001/api/update/${editId}`, {
+    Axios.put(`/api/update/${editId}`, {
       name: name,
       phone: phone,
       email: email,
@@ -54,15 +54,15 @@ function App() {
       setEmail("");
       setEditId(null);
       setEditing(false);
-      Axios.get("http://localhost:3001/api/get").then((response) => {
+      Axios.get("/api/get").then((response) => {
         setContactList(response.data);
       });
     });
   };
 
   const handleDelete = (id) => {
-    Axios.delete(`http://localhost:3001/api/delete/${id}`).then(() => {
-      Axios.get("http://localhost:3001/api/get").then((response) => {
+    Axios.delete(`/api/delete/${id}`).then(() => {
+      Axios.get("/api/get").then((response) => {
         setContactList(response.data);
       });
     });

@@ -5,10 +5,10 @@ const app = express();
 const mysql = require("mysql");
 
 const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "AsDfGh12!",
-  database: "ContactListDataBase",
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USERNAME || "root",
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_SCHEMA_CONTACTS || "ContactListDataBase",
 });
 
 app.use(cors());
@@ -62,6 +62,8 @@ app.delete("/api/delete/:id", (req, res) => {
   });
 });
 
-app.listen(3001, () => {
-  console.log("Server running on port 3001");
+var myPort = process.env.PORT || 3001;
+
+app.listen(myPort, () => {
+  console.log("Server running on port " + myPort);
 });
